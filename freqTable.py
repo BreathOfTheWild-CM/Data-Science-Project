@@ -1,10 +1,45 @@
+from sys import argv, exit
+from getopt import getopt, GetoptError
 from os import walk, path
 from collections import defaultdict 
 from re import sub, search, VERBOSE, DOTALL, MULTILINE
 from nltk import sent_tokenize, word_tokenize, ngrams, RegexpTokenizer
 from pickle import dump
+
+def init():
+    # Default output file
+    outputFile = 'frequency_table.pkl'
+    # Default start directory is the current directory
+    startDir = path.dirname(path.abspath(__file__))
+    # Default n for n-gram
+    n = 3
+
+    try:
+        opts, args = getopt(argv[1:],"hi:o:n:")
+    except GetoptError:
+        print ('freqTable.py -i <inputdirectory> -o <outputfile> -n <n>')
+        exit(2)
+    for opt, arg in opts:
+        if opt == '-h':
+            print ('test.py -i <inputdirectory> -o <outputfile> -n <n>')
+            exit()
+        elif opt in ("-i"):
+            startDir = arg
+            if not path.exists(startDir):
+                print('inputdirectory does not exist')
+                exit()
+        elif opt in ("-o"):
+            outputFile = arg
+        elif opt in ("-n"):
+            try :
+                n = int(arg)
+            except ValueError:
+                print("Invalid argument for n")
+                exit()
+
+    return n, startDir, outputFile
  
-def buildFreqTable(rootdir, n):
+def buildFreqTable(n, rootdir):
     # Create the, currently empty dict:
     # Once a key is not known within the dict, it will automatically be assigned the emptyset.
     freqTable = defaultdict(set)
@@ -46,15 +81,17 @@ def filterMail(mail):
     mail = sub(r"(Message-ID:|Date:|From:|To:|Subject:).*?(\n\n)", "", mail, 0, VERBOSE | DOTALL | MULTILINE)
     return sub(r"\*\*\*\*\*\*\*\*\*.*\*\*\*\*\*\*\*\*\*", "", mail, 0, VERBOSE | DOTALL | MULTILINE)
 
-def saveFreqTableToDisk(freqTable):
-    freqTableFile = open("frequency_table.pkl", "wb")
+def saveFreqTableToDisk(freqTable, filename):
+    freqTableFile = open(filename + ".pkl", "wb")
     dump(freqTable, freqTableFile)
     freqTableFile.close()
 
 if __name__ == '__main__':
-    # Get the current directory in which the script is executed.
-    # All files in this directory and subsequent subdirectories,
-    # will be used to construct the frequency table.
-    currentdir = path.dirname(path.abspath(__file__))
-    freqTable = buildFreqTable(currentdir, n=4)
-    saveFreqTableToDisk(freqTable)
+    # Get the n to be used in the n-gram,
+    # Get the directory from which that frequency table must be build,
+    # Get the name of the output file.
+    n, startDir, outputFile = init()
+    # Start to build the frequency table.
+    freqTable = buildFreqTable(n, startDir)
+    # Store the frequency table to persistant storage.
+    saveFreqTableToDisk(freqTable, outputFile)
