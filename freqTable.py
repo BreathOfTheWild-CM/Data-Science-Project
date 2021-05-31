@@ -3,15 +3,15 @@ from getopt import getopt, GetoptError
 from os import walk, path
 from collections import defaultdict 
 from re import sub, search, VERBOSE, DOTALL, MULTILINE
-from nltk import sent_tokenize, word_tokenize, ngrams, RegexpTokenizer
+from nltk import sent_tokenize, ngrams, RegexpTokenizer
 from pickle import dump
 
 def init():
-    # Default output file
-    outputFile = 'frequency_table.pkl'
-    # Default start directory is the current directory
+    # Default output file.
+    outputFile = 'frequency_table'
+    # Default start directory is the current directory.
     startDir = path.dirname(path.abspath(__file__))
-    # Default n for n-gram
+    # Default n for n-gram.
     n = 3
 
     try:
@@ -21,12 +21,15 @@ def init():
         exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print ('test.py -i <inputdirectory> -o <outputfile> -n <n>')
+            print ('freqTable.py -i <inputdirectory> -o <outputfile> -n <n>')
             exit()
         elif opt in ("-i"):
             startDir = arg
             if not path.exists(startDir):
-                print('inputdirectory does not exist')
+                print('The input directory does not exist')
+                exit()
+            if not path.isdir(startDir):
+                print('The input is not a directory.')
                 exit()
         elif opt in ("-o"):
             outputFile = arg
@@ -34,7 +37,7 @@ def init():
             try :
                 n = int(arg)
             except ValueError:
-                print("Invalid argument for n")
+                print("Invalid argument given for n.")
                 exit()
 
     return n, startDir, outputFile
