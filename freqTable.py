@@ -14,31 +14,41 @@ def init():
     # Default n for n-gram.
     n = 3
 
+    # Get the input arguments.
     try:
         opts, args = getopt(argv[1:],"hi:o:n:")
+    # Unexpected arguments are provided.
     except GetoptError:
         print ('freqTable.py -i <inputdirectory> -o <outputfile> -n <n>')
         exit(2)
+    # For each provided argument:
     for opt, arg in opts:
+        # Help argument.
         if opt == '-h':
             print ('freqTable.py -i <inputdirectory> -o <outputfile> -n <n>')
-            exit()
+            exit(2)
+        # Input directory argument.
         elif opt in ("-i"):
             startDir = arg
+            # Input directory must exist.
             if not path.exists(startDir):
                 print('The input directory does not exist')
-                exit()
+                exit(2)
+            # Input directory must also be a directory.
             if not path.isdir(startDir):
                 print('The input is not a directory.')
-                exit()
+                exit(2)
+        # Output filename argument.
         elif opt in ("-o"):
             outputFile = arg
+        # N to be used in n-gram.
         elif opt in ("-n"):
+            # Ensure that n is a positive integer.
             try :
-                n = int(arg)
+                n = abs(int(arg))
             except ValueError:
                 print("Invalid argument given for n.")
-                exit()
+                exit(2)
 
     return n, startDir, outputFile
  
