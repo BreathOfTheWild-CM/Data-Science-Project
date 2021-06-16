@@ -24,6 +24,7 @@ Use python3 to run the program, the following three arguments are optional:
 1.  -o: The name of the output file, defaults to "frequency_table.pkl"
 2.  -i: The location of the input directory. This is the directory from which the program will recursively iterate over each file, defaults to the location of the program.
 3.  -n: The n to be used in the n-gram, defaults to 3.
+
 For instance:
 ```
 python3 freqTable.py -o output -i /directory/subdir -n 5
@@ -34,7 +35,7 @@ Builds a frequency table using a 5-gram of the files in ``/directory/subdir``, a
 Attachments and meta-data files are ignored, also a basic filtering is done to eliminate as much noise/headers of the emails as possible.
 
 ## Output
-The output of the program is a hashmap, which maps a n-gram (key) to a set of filenames (value). Resulting hashmap of type <String,{String}> (<key,value>) is serialized using the Python module [pickle](https://docs.python.org/3/library/pickle.html "Pickle documentation"). The length of the set of filenames would then indicate the frequency of each n-gram.
+The output of the program is a hashmap, which maps a n-gram (key) to a set of filenames (value). Resulting hashmap of type <(String1, String2, ..., StringN),{String}> (<key,value>) is serialized using the Python module [pickle](https://docs.python.org/3/library/pickle.html "Pickle documentation"). The size of the set of filenames would then indicate the frequency of each n-gram.
 
 In order to demonstrate how the .pkl file, as provided by the output of ``freqTable.py``, could be deserialized the script ``deserialize.py`` can be referenced. This script prints the first 10 n-grams of such a .pkl file.
 
